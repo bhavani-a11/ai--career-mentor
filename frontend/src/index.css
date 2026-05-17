@@ -52,7 +52,7 @@
   }
 
   #root {
-    @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col border-x border-slate-200;
+    @apply mx-0 flex min-h-screen w-full max-w-none flex-col border-0;
     box-sizing: border-box;
   }
 
