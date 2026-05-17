@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+frontend/dist/
+frontend/build/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads & vector indexes (generated at runtime)
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/vector_db/*
+!backend/vector_db/.gitkeep
+
+# Logs & caches
+*.log
+.pytest_cache/
+.coverage
+htmlcov/

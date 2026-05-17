@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* 1. Inject Tailwind's base reset, component layer, and utility classes */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Project-wide defaults and CSS variables (used by App.css + Tailwind) */
+@layer base {
+  :root {
+    --text: #64748b;
+    --text-h: #0f172a;
+    --bg: #f8fafc;
+    --border: #e2e8f0;
+    --code-bg: #f1f5f9;
+    --accent: #4f46e5;
+    --accent-bg: rgba(79, 70, 229, 0.1);
+    --accent-border: rgba(79, 70, 229, 0.4);
+    --social-bg: rgba(241, 245, 249, 0.8);
+    --shadow:
+      rgba(15, 23, 42, 0.08) 0 10px 15px -3px,
+      rgba(15, 23, 42, 0.04) 0 4px 6px -2px;
+  }
+
+  .dark {
+    --text: #94a3b8;
+    --text-h: #f1f5f9;
+    --bg: #0f172a;
+    --border: #334155;
+    --code-bg: #1e293b;
+    --accent: #818cf8;
+    --accent-bg: rgba(129, 140, 248, 0.15);
+    --accent-border: rgba(129, 140, 248, 0.45);
+    --social-bg: rgba(30, 41, 59, 0.8);
+    --shadow:
+      rgba(0, 0, 0, 0.35) 0 10px 15px -3px,
+      rgba(0, 0, 0, 0.2) 0 4px 6px -2px;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply m-0 min-h-screen font-sans text-slate-600;
+    color: var(--text);
+    background: var(--bg);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col border-x border-slate-200;
+    box-sizing: border-box;
+  }
+
+  .dark body {
+    @apply text-slate-400;
+  }
+
+  .dark #root {
+    @apply border-slate-700;
+  }
+
+  h1,
+  h2 {
+    @apply font-medium text-slate-900;
+    color: var(--text-h);
+  }
+
+  h1 {
+    @apply my-8 text-4xl tracking-tight md:text-5xl;
+  }
+
+  h2 {
+    @apply mb-2 text-xl md:text-2xl;
+  }
+
+  p {
+    @apply m-0;
+  }
+
+  code {
+    @apply inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-sm text-slate-900;
+    background: var(--code-bg);
+    color: var(--text-h);
+  }
+}
+
+/* 3. Reusable component classes built from Tailwind utilities */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-card;
+  }
+}
