@@ -21,7 +21,8 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 | http://localhost:8000 | API root |
 | http://localhost:8000/docs | Swagger UI (interactive API docs) |
 | http://localhost:8000/api/health | Health check |
-| http://localhost:8000/api/chat | Chat with Gemini (POST) |
+| http://localhost:8000/api/chat | Chat — RAG + GitHub Models (POST) |
+| http://localhost:8000/api/upload/pdf | Upload PDF → chunk → FAISS index (POST) |
 
 ### Chat endpoint example
 
@@ -30,7 +31,31 @@ $body = @{ message = "What skills should I learn for a frontend developer role?"
 Invoke-RestMethod -Uri "http://localhost:8000/api/chat" -Method POST -Body $body -ContentType "application/json"
 ```
 
-Set `GEMINI_API_KEY` in `.env` ([Google AI Studio](https://aistudio.google.com/apikey)).
+### PDF upload + RAG example
+
+1. **Upload** a resume PDF (builds FAISS index):
+
+```powershell
+curl -X POST "http://localhost:8000/api/upload/pdf" -F "file=@C:\path\to\resume.pdf"
+```
+
+2. **Ask** about the document:
+
+```powershell
+$body = @{ message = "What skills are mentioned in my resume?"; use_rag = $true } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:8000/api/chat" -Method POST -Body $body -ContentType "application/json"
+```
+
+Set `GITHUB_TOKEN` in `.env` ([GitHub token with models access](https://github.com/settings/tokens)).
+
+### RAG stack
+
+| Step | Tool |
+|------|------|
+| Chunking | LangChain `RecursiveCharacterTextSplitter` |
+| Embeddings | Hugging Face `sentence-transformers/all-MiniLM-L6-v2` |
+| Vector store | FAISS (`backend/vector_db/faiss_index/`) |
+| LLM answers | GitHub Models only (`github_llm.py`) |
 
 ## Folder guide
 
@@ -41,7 +66,7 @@ See the main [README](../README.md) for the full project overview.
 | `app/main.py` | Creates the FastAPI app, CORS, registers routes |
 | `app/config.py` | Loads settings from `.env` |
 | `app/routes/` | HTTP endpoints (one file per feature) |
-| `app/services/` | Business logic (add later) |
+| `app/services/` | Business logic (chat, PDF extraction, etc.) |
 | `app/models/` | Pydantic request/response schemas |
 | `app/db/` | MongoDB helpers |
 | `app/ai/` | LangChain + FAISS (add later) |

@@ -1,1 +1,1 @@
-"""AI modules — LangChain chains, embeddings, and FAISS vector operations."""
+"""AI modules: RAG pipeline, future LangChain tools."""

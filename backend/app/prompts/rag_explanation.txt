@@ -1,0 +1,3 @@
+RAG flow for this project:
+1. Upload PDF → text extracted → chunked → embedded → FAISS saved
+2. Chat with use_rag=true → similarity search → prompt with chunks → GitHub Models

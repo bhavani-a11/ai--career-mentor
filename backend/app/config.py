@@ -19,25 +19,26 @@ class Settings(BaseSettings):
     debug: bool = True
 
     # Comma-separated in .env: http://localhost:5173,http://127.0.0.1:5173
-    cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    cors_origins_str: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     mongodb_uri: str = "mongodb://localhost:27017"
     mongodb_db_name: str = "career_mentor"
 
-    openai_api_key: str = ""
+    github_token: str = ""
+    github_model: str = "openai/gpt-4o-mini"
 
-    gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    # Hugging Face embeddings (downloaded on first use)
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    chunk_size: int = 500
+    chunk_overlap: int = 50
+    rag_top_k: int = 4
 
     uploads_dir: Path = BACKEND_ROOT / "uploads"
     vector_db_dir: Path = BACKEND_ROOT / "vector_db"
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, value: Union[str, list[str]]) -> list[str]:
-        if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
-        return value
+    @property
+    def cors_origins(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins_str.split(",") if origin.strip()]
 
     @field_validator("uploads_dir", "vector_db_dir", mode="before")
     @classmethod

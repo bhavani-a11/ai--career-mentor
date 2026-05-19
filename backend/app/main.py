@@ -40,4 +40,6 @@ def root():
         "docs": "/docs",
         "health": "/api/health",
         "chat": "/api/chat",
+        "upload_pdf": "/api/upload/pdf",
+        "rag_index": "vector_db/faiss_index (after PDF upload)",
     }
