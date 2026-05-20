@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     github_token: str = ""
     github_model: str = "openai/gpt-4o-mini"
 
+    # JWT Authentication configuration
+    jwt_secret_key: str = "your_super_secret_key_here_please_change_in_production"
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_minutes: int = 60
+
     # Hugging Face embeddings (downloaded on first use)
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     chunk_size: int = 500
