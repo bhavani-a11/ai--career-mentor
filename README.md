@@ -8,7 +8,8 @@ A full-stack AI career coaching app. This repository contains **project structur
 |-------|--------|
 | Frontend | React, Tailwind CSS, Vite |
 | Backend | FastAPI, LangChain, FAISS |
-| Database | MongoDB |
+| Database | PostgreSQL (Neon) |
+| Deployment | Render |
 
 ## Project layout
 
@@ -211,12 +212,37 @@ npm run dev
 - App: http://localhost:5173  
 - `/api` requests are proxied to the backend (see `frontend/vite.config.js`).
 
+## Deployment on Render
+
+This project is pre-configured to deploy to Render with a single click!
+
+### 1. Prerequisites
+- A GitHub account with your project pushed
+- A Render account (free tier works)
+- A GitHub Personal Access Token (for GitHub Models)
+
+### 2. Deploy Steps
+1. Go to [Render](https://render.com) and sign in with your GitHub account
+2. Click "New +" → "Blueprint"
+3. Connect your GitHub repository
+4. Render will automatically detect `render.yaml` and create:
+   - A PostgreSQL database
+   - A backend web service
+   - A frontend static site
+5. When prompted, enter your **GITHUB_TOKEN** in the environment variables
+6. Wait for all services to deploy (takes a few minutes)
+
+### 3. Post-Deployment
+- Your app will be available at: `https://ai-career-mentor-frontend.onrender.com`
+- Backend API: `https://ai-career-mentor-backend.onrender.com`
+- You can view logs and manage services in the Render dashboard
+
 ## What to build next
 
 Suggested order:
 
-1. User profile routes + MongoDB models  
-2. Resume upload → `uploads/` + metadata in MongoDB  
+1. User profile routes + PostgreSQL models  
+2. Resume upload → `uploads/` + metadata in PostgreSQL  
 3. Embed documents → build FAISS index in `vector_db/`  
 4. Chat route → `services/` + `ai/` + `prompts/`  
 5. React chat UI in `frontend/src/pages/`  

@@ -22,13 +22,16 @@ class Settings(BaseSettings):
     cors_origins_str: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
 
     # Database: PostgreSQL (Neon)
-    database_url: str = "postgresql://neondb_owner:npg_M8YIjuhQZ1Uy@ep-broad-tooth-aojggkeo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    database_url: str = ""
+    secret_key: str = ""
 
     github_token: str = ""
     github_model: str = "openai/gpt-4o-mini"
 
     # JWT Authentication configuration
-    jwt_secret_key: str = "your_super_secret_key_here_please_change_in_production"
+    @property
+    def jwt_secret_key(self) -> str:
+        return self.secret_key
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 60
 
