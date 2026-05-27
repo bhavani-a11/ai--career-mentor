@@ -38,8 +38,9 @@ export default function RegisterPage() {
         navigate("/login");
       }, 2000);
     } catch (err) {
+      console.error("Registration error details:", err);
       setError(
-        err.response?.data?.detail || "Registration failed. Email may already be in use."
+        err.response?.data?.detail || "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);

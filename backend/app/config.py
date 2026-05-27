@@ -19,10 +19,10 @@ class Settings(BaseSettings):
     debug: bool = True
 
     # Comma-separated in .env: http://localhost:5173,http://127.0.0.1:5173
-    cors_origins_str: str = "http://localhost:5173,http://127.0.0.1:5173"
+    cors_origins_str: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
 
-    mongodb_uri: str = "mongodb://localhost:27017"
-    mongodb_db_name: str = "career_mentor"
+    # Database: PostgreSQL (Neon)
+    database_url: str = "postgresql://neondb_owner:npg_M8YIjuhQZ1Uy@ep-broad-tooth-aojggkeo-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
     github_token: str = ""
     github_model: str = "openai/gpt-4o-mini"

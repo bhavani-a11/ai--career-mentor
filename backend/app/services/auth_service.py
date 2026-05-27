@@ -1,31 +1,30 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 from app.config import settings
-from app.db.mongodb import get_database
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from bson import ObjectId
-
-# Password hashing configuration using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from app.db.base import get_db
+from app.db.models import User
 
 # OAuth2 scheme configures how the token is retrieved.
-# Swagger UI will look at `/api/auth/login` to authorize.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifies if the plain password matches the hashed password."""
     try:
-        return pwd_context.verify(plain_password, hashed_password)
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
     except Exception:
         return False
 
 def get_password_hash(password: str) -> str:
     """Generates a secure bcrypt hash of a plain text password."""
-    return pwd_context.hash(password)
+    # bcrypt has a max password length of 72 bytes, so we take the first 72
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode("utf-8")[:72], salt)
+    return hashed.decode("utf-8")
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Generates a secure JWT token containing the payload data."""
@@ -41,10 +40,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-) -> dict:
+    db: Session = Depends(get_db)
+) -> User:
     """
-    Dependency function to validate JWT and fetch the authenticated user from MongoDB.
+    Dependency function to validate JWT and fetch the authenticated user from PostgreSQL.
     Raises an HTTP 401 Unauthorized if the token is invalid or user is not found.
     """
     credentials_exception = HTTPException(
@@ -60,10 +59,8 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    user = await db["users"].find_one({"email": email})
+    user = db.query(User).filter(User.email == email).first()
     if user is None:
         raise credentials_exception
 
-    # Convert MongoDB _id (ObjectId) to string so it serializes nicely
-    user["_id"] = str(user["_id"])
     return user

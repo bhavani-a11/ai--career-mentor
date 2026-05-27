@@ -13,6 +13,9 @@ import RoadmapGeneratorPage from "./pages/RoadmapGeneratorPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 
+// Set this to true for development to bypass authentication entirely
+const DEV_MODE_BYPASS_AUTH = false;
+
 // Global Authentication Context
 const AuthContext = createContext(null);
 
@@ -23,6 +26,16 @@ export function AuthProvider({ children }) {
   // Load user profile on startup if JWT exists in localStorage
   useEffect(() => {
     async function loadUser() {
+      if (DEV_MODE_BYPASS_AUTH) {
+        setUser({
+          _id: "dev-user-id",
+          email: "dev@example.com",
+          full_name: "Developer User"
+        });
+        setLoading(false);
+        return;
+      }
+
       const token = localStorage.getItem("token");
       if (token) {
         try {
@@ -41,6 +54,15 @@ export function AuthProvider({ children }) {
 
   // Authenticate user credentials and save token
   async function login(email, password) {
+    if (DEV_MODE_BYPASS_AUTH) {
+      setUser({
+        _id: "dev-user-id",
+        email: email,
+        full_name: "Developer User"
+      });
+      return;
+    }
+
     const response = await api.post("/auth/login", { email, password });
     localStorage.setItem("token", response.data.access_token);
     const profileResponse = await api.get("/auth/me");
@@ -49,6 +71,11 @@ export function AuthProvider({ children }) {
 
   // Clear authentication token and state
   function logout() {
+    if (DEV_MODE_BYPASS_AUTH) {
+      setUser(null);
+      return;
+    }
+
     localStorage.removeItem("token");
     setUser(null);
   }

@@ -14,13 +14,12 @@ class UserLogin(BaseModel):
 
 class UserOut(BaseModel):
     """Schema for returning user details publicly."""
-    id: str = Field(..., alias="_id", description="MongoDB generated string ID")
+    id: int = Field(..., description="PostgreSQL generated integer ID")
     email: str
     full_name: str
 
     model_config = {
-        "populate_by_name": True,
-        "arbitrary_types_allowed": True
+        "from_attributes": True
     }
 
 class Token(BaseModel):
