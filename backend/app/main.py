@@ -5,12 +5,19 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routes import api_router
+from app.db.base import Base, engine
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings.uploads_dir.mkdir(parents=True, exist_ok=True)
     settings.vector_db_dir.mkdir(parents=True, exist_ok=True)
+    # Create database tables
+    if settings.database_url:
+        try:
+            Base.metadata.create_all(bind=engine)
+        except Exception as e:
+            print(f"Warning: Could not create database tables: {e}")
     yield
 
 
@@ -23,7 +30,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=settings.parsed_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

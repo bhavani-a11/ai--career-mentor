@@ -12,13 +12,15 @@ class Settings(BaseSettings):
         env_file=BACKEND_ROOT / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        env_prefix="",  # No prefix, so env vars match field names
     )
 
     app_name: str = "AI Career Mentor"
     api_version: str = "0.1.0"
     debug: bool = True
 
-    # Comma-separated in .env: http://localhost:5173,http://127.0.0.1:5173
+    # Comma-separated CORS origins (supports both CORS_ORIGINS and cors_origins_str)
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
     cors_origins_str: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"
 
     # Database: PostgreSQL (Neon)
@@ -45,8 +47,10 @@ class Settings(BaseSettings):
     vector_db_dir: Path = BACKEND_ROOT / "vector_db"
 
     @property
-    def cors_origins(self) -> list[str]:
-        return [origin.strip() for origin in self.cors_origins_str.split(",") if origin.strip()]
+    def parsed_cors_origins(self) -> list[str]:
+        # Use cors_origins if set, else cors_origins_str
+        origins_str = self.cors_origins if self.cors_origins and self.cors_origins != "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174" else self.cors_origins_str
+        return [origin.strip() for origin in origins_str.split(",") if origin.strip()]
 
     @field_validator("uploads_dir", "vector_db_dir", mode="before")
     @classmethod
