@@ -6,7 +6,7 @@ services:
     plan: free
     autoDeploy: true
     buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app
+    startCommand: cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -24,14 +24,26 @@ services:
     runtime: static
     plan: free
     autoDeploy: true
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: cd frontend && npm ci && npm run build
     staticPublishPath: frontend/dist
     envVars:
+      # Frontend will normalize this into `${VITE_API_BASE_URL}/api` at runtime.
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: ai-career-mentor-backend
+          type: web
+          property: host
+      # Keep VITE_API_URL for backward compatibility with older code.
       - key: VITE_API_URL
         fromService:
           name: ai-career-mentor-backend
           type: web
           property: host
+    routes:
+      # React Router uses BrowserRouter, so we must serve index.html for all non-asset routes.
+      - type: rewrite
+        source: /*
+        destination: /index.html
 
 databases:
   - name: ai-career-mentor-db
